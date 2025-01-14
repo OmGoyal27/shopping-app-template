@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping App</title>
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Shopping App</h1>
+    </header>
+    <main>
+        <div class="products">
+            {% for product in products %}
+            <div class="product-card">
+                <h2>{{ product.name }}</h2>
+                <p>Price: ${{ product.price }}</p>
+                <p>{{ product.description }}</p>
+                <a href="{{ product.link }}" class="btn">View Product</a>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

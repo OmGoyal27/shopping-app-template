@@ -3,9 +3,8 @@
     "price": 100,
     "description": "Product description",
     "images": [
-        "https://via.placeholder.com/150",
-        "https://via.placeholder.com/150",
-        "https://via.placeholder.com/150"
+        "image.png",
+        "image.png"
     ],
     "stock": 10
 }

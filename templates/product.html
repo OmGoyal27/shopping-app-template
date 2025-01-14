@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+    <header>
+        <h1>{{ product.name }}</h1>
+        <a href="/" class="btn">Back to Home</a>
+    </header>
+    <main>
+        <div class="product-details">
+            <div class="product-images">
+                {% for image in product.images %}
+                <img src="/Products/{{ product.name }}/assets/{{ image }}" alt="{{ product.name }}">
+                {% endfor %}
+            </div>
+            <div class="product-info">
+                <h2>Description</h2>
+                <p>{{ product.description }}</p>
+                <h3>Price: ₹{{ product.price }}</h3>
+                {% if product.stock > 0 %}
+                <p class="in-stock">In Stock: {{ product.stock }}</p>
+                <a href="#" class="btn">Buy Now</a>
+                {% else %}
+                <p class="out-of-stock">Out of Stock</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

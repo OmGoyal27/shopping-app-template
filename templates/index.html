@@ -3,24 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping App</title>
+    <title>Shopping App | Om Goyal</title>
     <link rel="stylesheet" href="/static/styles/styles.css">
 </head>
 <body>
     <header>
-        <h1>Welcome to the Shopping App</h1>
+        <h1>Shopping App (By Om Goyal)</h1>
+        <div class="search-container">
+            <form action="/search" method="GET">
+                <input type="text" name="query" placeholder="Search products..." class="search-input" value="{{ query if search }}" minlength="2">
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
     </header>
     <main>
-        <div class="products">
-            {% for product in products %}
-            <div class="product-card">
-                <h2>{{ product.name }}</h2>
-                <p>Price: ${{ product.price }}</p>
-                <p>{{ product.description }}</p>
-                <a href="{{ product.link }}" class="btn">View Product</a>
+        {% if search and query %}
+            <h2>Search Results for "{{ query }}"</h2>
+            {% if products %}
+                <div class="products">
+                    {% for product in products %}
+                    <div class="product-card">
+                        <h3>{{ product.name }}</h3>
+                        <div class="product-images">
+                            <img src="/Products/{{ product.name }}/assets/{{ product.images[0] }}" alt="{{ product.name }}">
+                        </div>
+                        <p>₹{{ product.price }}</p>
+                        <a href="/product/{{ product.name }}" class="btn">View Product</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No products matched your search for "{{ query }}".</p>
+                <a href="/" class="btn">Go to Home</a>
+            {% endif %}
+        {% else %}
+            <h2>All Products</h2>
+            <div class="products">
+                {% for product in products %}
+                <div class="product-card">
+                    <h3>{{ product.name }}</h3>
+                    <div class="product-images">
+                    <img src="/Products/{{ product.name }}/assets/{{ product.images[0] }}" alt="{{ product.name }} image">
+                </div>
+                    <p>₹{{ product.price }}</p>
+                    <a href="/product/{{ product.name }}" class="btn">View Product</a>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+        {% endif %}
     </main>
 </body>
 </html>

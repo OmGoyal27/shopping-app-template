@@ -1,0 +1,9 @@
+{
+    "name": "Example Product 2",
+    "price": 0,
+    "description": "This is your product description. Enter your product description here. Whenever people search for something, if your description matches the filter, it is going to be displayed there.",
+    "images": [
+        "example.jpg"
+    ],
+    "stock": 10
+}

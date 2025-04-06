@@ -25,6 +25,10 @@
                 {% if product.stock > 0 %}
                 <p class="in-stock">In Stock: {{ product.stock }}</p>
                 <a href="#" class="btn">Buy Now</a>
+                <form action="{{ url_for('add_to_cart', product_name=product.name) }}" method="post">
+                    <input type="number" name="quantity" value="1" min="1">
+                    <button type="submit">Add to Cart</button>
+                </form>
                 {% else %}
                 <p class="out-of-stock">Out of Stock</p>
                 {% endif %}

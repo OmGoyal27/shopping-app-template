@@ -1,8 +1,9 @@
 import os
 import json
-from flask import Flask, render_template, send_from_directory, abort, request
+from flask import Flask, render_template, send_from_directory, abort, request, session, redirect, url_for
 
 app = Flask(__name__)
+app.secret_key = "your_secret_key"  # Required for session management
 PRODUCTS_DIR = "Products"
 
 @app.route("/")
@@ -54,6 +55,30 @@ def search():
 
     # Render the index.html template with search results
     return render_template("index.html", query=query, products=matched_products, search=True)
+
+@app.route("/cart")
+def cart():
+    cart = session.get("cart", {})
+    return render_template("cart.html", cart=cart)
+
+@app.route("/add_to_cart/<product_name>", methods=["POST"])
+def add_to_cart(product_name):
+    cart = session.get("cart", {})
+    quantity = int(request.form.get("quantity", 1))
+    if product_name in cart:
+        cart[product_name] += quantity
+    else:
+        cart[product_name] = quantity
+    session["cart"] = cart
+    return redirect(url_for("cart"))
+
+@app.route("/remove_from_cart/<product_name>", methods=["POST"])
+def remove_from_cart(product_name):
+    cart = session.get("cart", {})
+    if product_name in cart:
+        del cart[product_name]
+    session["cart"] = cart
+    return redirect(url_for("cart"))
 
 if __name__ == "__main__":
     app.run(debug=True)

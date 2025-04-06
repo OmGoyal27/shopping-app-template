@@ -159,3 +159,115 @@ input[type="number"] {
     border: 1px solid #ccc; /* Light gray border */
     border-radius: 3px; /* Rounded corners */
 }
+
+.cart-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-items li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cart-items li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+.cart-items h2 {
+    font-size: 1.2rem;
+    color: #007bff;
+    margin: 0;
+    flex: 2;
+}
+
+.cart-items p {
+    margin: 0;
+    color: #c0c0c0;
+    flex: 1;
+    text-align: center;
+}
+
+.cart-items form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: flex-start; /* Align buttons closer to the input */
+}
+
+.cart-items input[type="number"] {
+    width: 70px; /* Slightly wider for better usability */
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    margin-right: 10px; /* Space between input and buttons */
+}
+
+.cart-items button {
+    background-color: #ff6f61; /* Soft red background for remove button */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Larger padding for better visibility */
+    font-size: 16px; /* Larger font size */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cart-items button:hover {
+    background-color: #ff4a3d; /* Slightly darker red on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+.cart-items button:active {
+    background-color: #e6392d; /* Even darker red on click */
+    transform: scale(0.95); /* Slight shrink effect */
+}
+
+.cart-items .update-btn {
+    background-color: #28a745; /* Green background for update button */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Larger padding for consistency */
+    font-size: 16px; /* Larger font size */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cart-items .update-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+.cart-items .update-btn:active {
+    background-color: #1e7e34; /* Even darker green on click */
+    transform: scale(0.95); /* Slight shrink effect */
+}
+
+.cart-items .update-btn {
+    background-color: #007bff; /* Blue background for update button */
+}
+
+.cart-items .update-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.cart-items .update-btn:active {
+    background-color: #004085; /* Even darker blue on click */
+}

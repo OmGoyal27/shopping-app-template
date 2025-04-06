@@ -104,5 +104,36 @@ def update_cart(product_name):
     session["cart"] = cart
     return redirect(url_for("cart"))
 
+@app.route("/buy", methods=["POST", "GET"])
+def buy():
+    if request.method == "GET":
+        return redirect(url_for("cart"))
+
+    cart = session.get("cart", {})
+    detailed_cart = []
+
+    for product_name, quantity in cart.items():
+        product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+        if os.path.exists(product_path):
+            with open(product_path, "r") as file:
+                product_details = json.load(file)
+                detailed_cart.append({
+                    "name": product_name,
+                    "quantity": quantity,
+                    "price": product_details.get("price", 0),
+                    "total_cost": quantity * product_details.get("price", 0)
+                })
+
+    # Pass the detailed cart as a query parameter to the checkout page
+    return render_template("checkout.html", cart=detailed_cart)
+
+@app.route("/checkout")
+def checkout():
+    # Only render the checkout page if cart data is passed
+    cart = request.args.get("cart", None)
+    if not cart:
+        return redirect(url_for("index"))
+    return render_template("checkout.html", cart=json.loads(cart))
+
 if __name__ == "__main__":
     app.run(debug=True)

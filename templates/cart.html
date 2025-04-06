@@ -40,6 +40,11 @@
                     </li>
                 {% endfor %}
             </ul>
+            <div class="checkout-container">
+                <form action="{{ url_for('buy') }}" method="post">
+                    <button type="submit" class="btn buy-btn">Checkout</button>
+                </form>
+            </div>
         {% else %}
             <p>Your cart is empty.</p>
         {% endif %}

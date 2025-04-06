@@ -15,6 +15,13 @@
                 <button type="submit" class="search-button">Search</button>
             </form>
         </div>
+        <hr><hr><hr><hr><hr><hr><hr><hr><hr>
+        <nav>
+            <a href="{{ url_for('cart') }}" class="btn">
+                <img src="{{ url_for('static', filename='assets/cart.png') }}" alt="Cart" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Cart
+        </a>
+    </nav>
     </header>
     <main>
         {% if search and query %}

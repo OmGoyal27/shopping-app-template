@@ -59,7 +59,20 @@ def search():
 @app.route("/cart")
 def cart():
     cart = session.get("cart", {})
-    return render_template("cart.html", cart=cart)
+    detailed_cart = {}
+
+    for product_name, quantity in cart.items():
+        product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+        if os.path.exists(product_path):
+            with open(product_path, "r") as file:
+                product_details = json.load(file)
+                detailed_cart[product_name] = {
+                    "quantity": quantity,
+                    "images": product_details.get("images", []),
+                    "description": product_details.get("description", ""),
+                }
+
+    return render_template("cart.html", cart=detailed_cart)
 
 @app.route("/add_to_cart/<product_name>", methods=["POST"])
 def add_to_cart(product_name):

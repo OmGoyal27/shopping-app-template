@@ -15,10 +15,19 @@
     <main>
         {% if cart %}
             <ul class="cart-items">
-                {% for product_name, quantity in cart.items() %}
-                    <li>
-                        <h2>{{ product_name }}</h2>
-                        <p>Quantity: {{ quantity }}</p>
+                {% for product_name, details in cart.items() %}
+                    <li class="cart-item">
+                        <div class="product-images">
+                            <a href="{{ url_for('product', product_name=product_name) }}">
+                                <img src="/Products/{{ product_name }}/assets/{{ details['images'][0] }}" alt="{{ product_name }}">
+                            </a>
+                        </div>
+                        <div class="cart-item-info">
+                            <h2>
+                                <a href="{{ url_for('product', product_name=product_name) }}">{{ product_name }}</a>
+                            </h2>
+                            <p>Quantity: {{ details['quantity'] }}</p>
+                        </div>
                         <form action="{{ url_for('remove_from_cart', product_name=product_name) }}" method="post">
                             <button type="submit" class="btn">Remove</button>
                         </form>

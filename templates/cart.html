@@ -24,13 +24,15 @@
                         </div>
                         <div class="cart-item-info">
                             <h2>
-                                <a href="{{ url_for('product', product_name=product_name) }}">{{ product_name }}</a>
+                                <a href="{{ url_for('product', product_name=product_name) }}" class="product-link">{{ product_name }}</a>
                             </h2>
                             <p>Quantity: {{ details['quantity'] }}</p>
                         </div>
-                        <form action="{{ url_for('remove_from_cart', product_name=product_name) }}" method="post">
-                            <button type="submit" class="btn">Remove</button>
-                        </form>
+                        <div class="cart-item-actions">
+                            <form action="{{ url_for('remove_from_cart', product_name=product_name) }}" method="post">
+                                <button type="submit" class="btn remove-btn">Remove</button>
+                            </form>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

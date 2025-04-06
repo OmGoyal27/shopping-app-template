@@ -271,3 +271,53 @@ input[type="number"] {
 .cart-items .update-btn:active {
     background-color: #004085; /* Even darker blue on click */
 }
+
+.product-link {
+    color: #6c63ff; /* Soft purple color */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.product-link:hover {
+    color: #483d8b; /* Darker purple on hover */
+    text-decoration: underline;
+}
+
+.remove-btn {
+    background-color: #ff6f61; /* Soft red background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.remove-btn:hover {
+    background-color: #ff4a3d; /* Slightly darker red on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+.remove-btn:active {
+    background-color: #e6392d; /* Even darker red on click */
+    transform: scale(0.95); /* Slight shrink effect */
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem; /* Add spacing between sections */
+}
+
+.cart-item-info {
+    flex: 2; /* Take more space for product info */
+}
+
+.cart-item-actions {
+    flex: 1; /* Separate section for the remove button */
+    display: flex;
+    justify-content: flex-end; /* Align the button to the far right */
+}

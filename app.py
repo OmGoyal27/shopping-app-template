@@ -93,5 +93,16 @@ def remove_from_cart(product_name):
     session["cart"] = cart
     return redirect(url_for("cart"))
 
+@app.route("/update_cart/<product_name>", methods=["POST"])
+def update_cart(product_name):
+    cart = session.get("cart", {})
+    quantity = int(request.form.get("quantity", 1))
+    if quantity > 0:
+        cart[product_name] = quantity  # Update the quantity directly
+    else:
+        cart.pop(product_name, None)  # Remove the product if quantity is 0
+    session["cart"] = cart
+    return redirect(url_for("cart"))
+
 if __name__ == "__main__":
     app.run(debug=True)

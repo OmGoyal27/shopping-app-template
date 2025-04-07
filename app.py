@@ -135,5 +135,21 @@ def checkout():
         return redirect(url_for("index"))
     return render_template("checkout.html", cart=json.loads(cart))
 
+@app.route("/confirm_purchase", methods=["POST"])
+def confirm_purchase():
+    cart = session.get("cart", {})
+    for product_name, quantity in cart.items():
+        product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+        if os.path.exists(product_path):
+            with open(product_path, "r") as file:
+                product_details = json.load(file)
+            # Update stock
+            product_details["stock"] = max(0, product_details.get("stock", 0) - quantity)
+            with open(product_path, "w") as file:
+                json.dump(product_details, file, indent=4)
+    # Clear the cart after purchase
+    session["cart"] = {}
+    return redirect(url_for("index"))
+
 if __name__ == "__main__":
     app.run(debug=True)

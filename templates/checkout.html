@@ -23,10 +23,16 @@
                     </li>
                 {% endfor %}
             </ul>
+            <div class="checkout-container">
+                <form action="{{ url_for('confirm_purchase') }}" method="post">
+                    <button type="submit" class="btn buy-btn">Confirm Purchase</button>
+                </form>
+                <!-- Placeholder for future payment method integration -->
+                <p>Payment method: <em>Coming soon...</em></p>
+            </div>
         {% else %}
             <p>No items to checkout.</p>
         {% endif %}
-        <p>Add your own logic here.</p>
     </main>
 </body>
 </html>

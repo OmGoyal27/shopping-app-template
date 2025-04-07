@@ -26,6 +26,6 @@ And when it comes to the details of the product, make a new JSON file named `det
 
 # To-Dos
 
-- Make the buy button redirect to a page, which is posted with the list of items.
-
-- Make a cart feature.
+- ~~Make the buy button redirect to a page, which is posted with the list of items.~~
+- ~~Make a cart feature.~~
+- Add payment method integration.

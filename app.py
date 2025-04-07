@@ -23,11 +23,13 @@ def index():
 @app.route("/product/<product_name>")
 def product(product_name):
     product_path = os.path.join(PRODUCTS_DIR, product_name)
-    details_path = os.path.join(product_path, "details.json")       # Get the details of the product
-    if os.path.exists(details_path):                                # Only if it exists
+    details_path = os.path.join(product_path, "details.json")  # Get the details of the product
+    if os.path.exists(details_path):  # Only if it exists
         with open(details_path) as f:
             product_details = json.load(f)
-        return render_template("product.html", product=product_details) # Serve it.
+        # Mark product as unavailable if stock is 0
+        product_details["unavailable"] = product_details.get("stock", 0) == 0
+        return render_template("product.html", product=product_details)  # Serve it.
     else:
         abort(404)
 
@@ -68,6 +70,7 @@ def cart():
                 product_details = json.load(file)
                 detailed_cart[product_name] = {
                     "quantity": quantity,
+                    "stock": product_details.get("stock", 0),
                     "images": product_details.get("images", []),
                     "description": product_details.get("description", ""),
                 }
@@ -78,11 +81,25 @@ def cart():
 def add_to_cart(product_name):
     cart = session.get("cart", {})
     quantity = int(request.form.get("quantity", 1))
-    if product_name in cart:
-        cart[product_name] += quantity
-    else:
-        cart[product_name] = quantity
-    session["cart"] = cart
+    product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+
+    if os.path.exists(product_path):
+        with open(product_path, "r") as file:
+            product_details = json.load(file)
+        available_stock = product_details.get("stock", 0)
+
+        # Prevent adding more items than available in stock
+        if product_name in cart:
+            new_quantity = cart[product_name] + quantity
+        else:
+            new_quantity = quantity
+
+        if new_quantity > available_stock:
+            return redirect(url_for("product", product_name=product_name))  # Redirect back to product page
+
+        cart[product_name] = new_quantity
+        session["cart"] = cart
+
     return redirect(url_for("cart"))
 
 @app.route("/remove_from_cart/<product_name>", methods=["POST"])

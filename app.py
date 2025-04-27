@@ -20,6 +20,10 @@ def index():
                     products.append(product_details)
     return render_template("index.html", products=products)
 
+@app.route("/static/<path:filename>")
+def static_files(filename):
+    return send_from_directory("static", filename)      # Just get some basic files, like the favicon
+
 @app.route("/product/<product_name>")
 def product(product_name):
     product_path = os.path.join(PRODUCTS_DIR, product_name)
@@ -37,10 +41,6 @@ def product(product_name):
 def product_assets(product_name, filename):
     product_assets_path = os.path.join(PRODUCTS_DIR, product_name, "assets")
     return send_from_directory(product_assets_path, filename)                   # Gets the photos and other assets.
-
-@app.route("/static/<path:filename>")
-def static_files(filename):
-    return send_from_directory("static", filename)      # Just get some basic files, like the favicon
 
 @app.route("/search")
 def search():

@@ -1,0 +1,10 @@
+{
+    "name": "Product name",
+    "price": 100,
+    "description": "Product description",
+    "images": [
+        "image.png",
+        "image.png"
+    ],
+    "stock": 10
+}

@@ -163,9 +163,15 @@ def confirm_purchase():
             product_details["stock"] = max(0, product_details.get("stock", 0) - quantity)
             with open(product_path, "w") as file:
                 json.dump(product_details, file, indent=4)
+                
+            print(f"Purchased {quantity} of {product_name}. Remaining stock: {product_details['stock']}")
     # Clear the cart after purchase
     session["cart"] = {}
-    return redirect(url_for("index"))
+    return redirect(url_for("thank_you"))
+
+@app.route("/thank_you")
+def thank_you():
+    return render_template("thank_you.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

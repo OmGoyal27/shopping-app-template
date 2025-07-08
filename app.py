@@ -120,6 +120,23 @@ def update_cart(product_name):
     session["cart"] = cart
     return redirect(url_for("cart"))
 
+def get_detailed_cart(product_name: str, quantity: int, detailed_cart: list = None):
+    if not detailed_cart:
+        detailed_cart = []
+
+    product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+    if os.path.exists(product_path):
+        with open(product_path, "r") as file:
+            product_details = json.load(file)
+            detailed_cart.append({
+                "name": product_name,
+                "quantity": quantity,
+                "price": product_details.get("price", 0),
+                "total_cost": quantity * product_details.get("price", 0)
+            })
+
+    return detailed_cart
+
 @app.route("/buy", methods=["POST", "GET"])
 def buy():
     if request.method == "GET":
@@ -129,19 +146,24 @@ def buy():
     detailed_cart = []
 
     for product_name, quantity in cart.items():
-        product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
-        if os.path.exists(product_path):
-            with open(product_path, "r") as file:
-                product_details = json.load(file)
-                detailed_cart.append({
-                    "name": product_name,
-                    "quantity": quantity,
-                    "price": product_details.get("price", 0),
-                    "total_cost": quantity * product_details.get("price", 0)
-                })
+        detailed_cart = get_detailed_cart(product_name, quantity, detailed_cart)
 
     # Pass the detailed cart as a query parameter to the checkout page
     return render_template("checkout.html", cart=detailed_cart)
+
+@app.route("/buy_now", methods=["GET", "POST"])
+def buy_now():
+    if request.method == "GET":
+        return redirect(url_for("cart"))
+    
+    data = request.form
+    product_name = data.get("product_name")
+    quantity = int(data.get("quantity", 1))
+
+    detailed_cart = get_detailed_cart(product_name, quantity)
+
+    return render_template("checkout.html", cart=detailed_cart)
+
 
 @app.route("/checkout")
 def checkout():

@@ -25,6 +25,7 @@
             </ul>
             <div class="checkout-container">
                 <form action="{{ url_for('confirm_purchase') }}" method="post">
+                    <input type="hidden" name="cart" value="{{ cart_data or '' }}">
                     <button type="submit" class="btn buy-btn">Confirm Purchase</button>
                 </form>
                 <!-- Placeholder for future payment method integration -->

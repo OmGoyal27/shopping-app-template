@@ -1,5 +1,7 @@
 import os
 import json
+import base64
+import binascii
 from flask import Flask, render_template, send_from_directory, abort, request, session, redirect, url_for
 
 app = Flask(__name__)
@@ -148,8 +150,10 @@ def buy():
     for product_name, quantity in cart.items():
         detailed_cart = get_detailed_cart(product_name, quantity, detailed_cart)
 
-    # Pass the detailed cart as a query parameter to the checkout page
-    return render_template("checkout.html", cart=detailed_cart)
+    # Encode cart data as base64 to avoid HTML escaping issues
+    cart_json = json.dumps(detailed_cart)
+    cart_b64 = base64.b64encode(cart_json.encode('utf-8')).decode('utf-8')
+    return render_template("checkout.html", cart=detailed_cart, cart_data=cart_b64)
 
 @app.route("/buy_now", methods=["GET", "POST"])
 def buy_now():
@@ -162,33 +166,91 @@ def buy_now():
 
     detailed_cart = get_detailed_cart(product_name, quantity)
 
-    return render_template("checkout.html", cart=detailed_cart)
+    # Encode cart data as base64 to avoid HTML escaping issues
+    cart_json = json.dumps(detailed_cart)
+    cart_b64 = base64.b64encode(cart_json.encode('utf-8')).decode('utf-8')
+    return render_template("checkout.html", cart=detailed_cart, cart_data=cart_b64)
 
 
 @app.route("/checkout")
 def checkout():
-    # Only render the checkout page if cart data is passed
-    cart = request.args.get("cart", None)
-    if not cart:
-        return redirect(url_for("index"))
-    return render_template("checkout.html", cart=json.loads(cart))
+    # Redirect to cart if accessed directly
+    return redirect(url_for("cart"))
 
 @app.route("/confirm_purchase", methods=["POST"])
 def confirm_purchase():
-    cart = session.get("cart", {})
-    for product_name, quantity in cart.items():
-        product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
-        if os.path.exists(product_path):
-            with open(product_path, "r") as file:
-                product_details = json.load(file)
-            # Update stock
-            product_details["stock"] = max(0, product_details.get("stock", 0) - quantity)
-            with open(product_path, "w") as file:
-                json.dump(product_details, file, indent=4)
+    cart_data = request.form.get("cart")
+    print(f"Raw cart data received: {repr(cart_data)}")  # Use repr to see exact string
+    
+    if cart_data:
+        # This is from checkout page (buy_now or buy), cart is base64 encoded
+        try:
+            # Decode from base64 first
+            cart_json = base64.b64decode(cart_data).decode('utf-8')
+            print(f"Decoded JSON: {cart_json}")
+            cart_list = json.loads(cart_json)
+            print(f"Successfully parsed cart: {cart_list}")
+            # Process cart from checkout (list format)
+            for item in cart_list:
+                product_name = item.get("name")
+                quantity = item.get("quantity", 0)
                 
-            print(f"Purchased {quantity} of {product_name}. Remaining stock: {product_details['stock']}")
-    # Clear the cart after purchase
-    session["cart"] = {}
+                if product_name and quantity > 0:
+                    product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+                    if os.path.exists(product_path):
+                        try:
+                            with open(product_path, "r") as file:
+                                product_details = json.load(file)
+                            
+                            # Check stock availability
+                            available_stock = product_details.get("stock", 0)
+                            if quantity > available_stock:
+                                print(f"Insufficient stock for {product_name}. Requested: {quantity}, Available: {available_stock}")
+                                continue
+                            
+                            # Update stock
+                            product_details["stock"] = max(0, available_stock - quantity)
+                            with open(product_path, "w") as file:
+                                json.dump(product_details, file, indent=4)
+                                
+                            print(f"Purchased {quantity} of {product_name}. Remaining stock: {product_details['stock']}")
+                        except (json.JSONDecodeError, IOError) as e:
+                            print(f"Error processing purchase for {product_name}: {e}")
+        except (json.JSONDecodeError, binascii.Error) as e:
+            print(f"Error parsing cart data: {e}")
+            return redirect(url_for("cart"))
+    else:
+        # This is from regular cart, use session cart
+        cart = session.get("cart", {})
+        if not cart:
+            return redirect(url_for("cart"))
+        
+        # Process session cart (dictionary format)
+        for product_name, quantity in cart.items():
+            product_path = os.path.join(PRODUCTS_DIR, product_name, "details.json")
+            if os.path.exists(product_path):
+                try:
+                    with open(product_path, "r") as file:
+                        product_details = json.load(file)
+                    
+                    # Check stock availability
+                    available_stock = product_details.get("stock", 0)
+                    if quantity > available_stock:
+                        print(f"Insufficient stock for {product_name}. Requested: {quantity}, Available: {available_stock}")
+                        continue
+                    
+                    # Update stock
+                    product_details["stock"] = max(0, available_stock - quantity)
+                    with open(product_path, "w") as file:
+                        json.dump(product_details, file, indent=4)
+                        
+                    print(f"Purchased {quantity} of {product_name}. Remaining stock: {product_details['stock']}")
+                except (json.JSONDecodeError, IOError) as e:
+                    print(f"Error processing purchase for {product_name}: {e}")
+        
+        # Clear the session cart after purchase
+        session["cart"] = {}
+    
     return redirect(url_for("thank_you"))
 
 @app.route("/thank_you")

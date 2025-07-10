@@ -179,6 +179,10 @@ def checkout():
 
 @app.route("/confirm_purchase", methods=["POST"])
 def confirm_purchase():
+    # Add your purchase confirmation logic here
+    # This place is where you would handle the purchase confirmation
+    # If payment is successful, update stock and clear cart
+    # If payment fails, you might want to redirect back to the cart or show an error message
     cart_data = request.form.get("cart")
     print(f"Raw cart data received: {repr(cart_data)}")  # Use repr to see exact string
     

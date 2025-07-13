@@ -177,23 +177,40 @@ def checkout():
     # Redirect to cart if accessed directly
     return redirect(url_for("cart"))
 
+def getPaymentOf(price: int):
+    # This function should handle the payment processing logic
+    # For now, we will just simulate a successful payment on enter pressed
+    user_input = input("Press Enter to simulate payment processing or type something to cancel...")
+    return False if user_input else True  # Simulate successful payment
+
+def getParsedCart(cart_data: str) -> list:
+    try:
+        # Decode from base64 first
+        cart_json = base64.b64decode(cart_data).decode('utf-8')
+        print(f"Decoded JSON: {cart_json}")
+        cart_list = json.loads(cart_json)
+        print(f"Successfully parsed cart: {cart_list}")
+    except (binascii.Error, json.JSONDecodeError) as e:
+        print(f"Error decoding or parsing cart data: {e}")
+        return []
+    return cart_list
+
 @app.route("/confirm_purchase", methods=["POST"])
 def confirm_purchase():
-    # Add your purchase confirmation logic here
-    # This place is where you would handle the purchase confirmation
-    # If payment is successful, update stock and clear cart
-    # If payment fails, you might want to redirect back to the cart or show an error message
     cart_data = request.form.get("cart")
-    print(f"Raw cart data received: {repr(cart_data)}")  # Use repr to see exact string
+    if not cart_data:
+        return redirect(url_for("cart"))
+    
+    cart_list = getParsedCart(cart_data)
+    product_price = sum(item.get("price") * item.get("quantity", 1) for item in cart_list)
+    payment_successful = getPaymentOf(product_price)
+    if not payment_successful:
+        print("Payment was not successful, redirecting to cart.")
+        return redirect(url_for("cart"))
     
     if cart_data:
         # This is from checkout page (buy_now or buy), cart is base64 encoded
         try:
-            # Decode from base64 first
-            cart_json = base64.b64decode(cart_data).decode('utf-8')
-            print(f"Decoded JSON: {cart_json}")
-            cart_list = json.loads(cart_json)
-            print(f"Successfully parsed cart: {cart_list}")
             # Process cart from checkout (list format)
             for item in cart_list:
                 product_name = item.get("name")
